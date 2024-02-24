@@ -1,71 +1,67 @@
+// CategoryScreen.js
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  Button,
-  FlatList,
-  Text,
-} from "react-native";
+import { View, StyleSheet, TextInput, Button, Modal } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-const CategoryScreen = ({ route }) => {
-  const { category } = route.params;
-  const [taskName, setTaskName] = useState("");
-  const [tasks, setTasks] = useState(category.tasks);
+const CategoryScreen = ({ isVisible, onClose, onAddCategory }) => {
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const navigation = useNavigation();
 
-  const addTask = () => {
-    if (taskName.trim() !== "") {
-      setTasks([...tasks, taskName]);
-      setTaskName("");
+  const handleCategoryPress = (category) => {
+    navigation.navigate("TaskScreen", { category });
+  };
+
+  const addCategory = () => {
+    if (newCategoryName.trim() !== "") {
+      const newCategory = { name: newCategoryName, tasks: [] };
+      onAddCategory(newCategory);
+      setNewCategoryName("");
+      onClose();
+      navigation.navigate("TaskScreen", { category: newCategory });
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.categoryName}>{category.name}</Text>
-      <FlatList
-        data={tasks}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <Text style={styles.task}>{item}</Text>}
-      />
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Add Task"
-          value={taskName}
-          onChangeText={setTaskName}
-        />
-        <Button title="Add" onPress={addTask} />
+    <Modal
+      visible={isVisible}
+      animationType="slide"
+      transparent={true}
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <TextInput
+            style={styles.input}
+            placeholder="New Category Name"
+            value={newCategoryName}
+            onChangeText={setNewCategoryName}
+          />
+          <Button title="Add Category" onPress={addCategory} />
+          <Button title="Cancel" onPress={onClose} />
+        </View>
       </View>
-    </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  modalContainer: {
     flex: 1,
-    padding: 20,
-  },
-  categoryName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  task: {
-    fontSize: 18,
-    marginBottom: 5,
-  },
-  inputContainer: {
-    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
   },
   input: {
-    flex: 1,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 5,
     padding: 10,
-    marginRight: 10,
   },
 });
 
