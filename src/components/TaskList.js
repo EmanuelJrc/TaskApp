@@ -3,6 +3,13 @@ import { FlatList, StyleSheet, TouchableOpacity, Text } from "react-native";
 import TaskItem from "./TaskItem";
 import { Ionicons } from "@expo/vector-icons";
 
+/**
+ * Renders a scrollable list of task categories.
+ * Includes a "+" icon to add new categories.
+ * Renders TaskItem component for each category.
+ * Uses FlatList with numColumns to render grid layout.
+ * Adds empty box as last item to allow adding categories.
+ */
 const TaskList = ({
   categories,
   navigation,
